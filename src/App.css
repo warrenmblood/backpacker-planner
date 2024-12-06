@@ -1,3 +1,119 @@
 .App {
   text-align: center;
 }
+
+.Login {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.login-form {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  width: 200px;
+  gap: 5px;
+}
+
+.login-form input {
+  width: 200px;
+}
+
+.login-form button {
+  cursor: pointer;
+}
+
+.sidebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 50px;
+  background-color: #12171e;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  transition: all 0.5s ease;
+}
+
+.sidebar.active {
+  width: 200px;
+}
+
+.main-content {
+  position: relative;
+  left: 50px;
+  width: calc(100% - 50px);
+  transition: all 0.5s ease;
+}
+
+.sidebar.active ~ .main-content {
+  left: 200px;
+  width: calc(100% - 200px);
+}
+
+.sidebar .header {
+  font-size: 24px;
+  color: white;
+  user-select: none;
+}
+
+.sidebar .header button {
+  position: absolute;
+  top: 0.4rem;
+  left: 50%;
+  line-height: 50px;
+  transform: translateX(-50%);
+  cursor: pointer;
+  background-color: transparent;
+  color: white;
+  font-size: 24px;
+  border: none;
+  transition: all 0.5s ease;
+}
+
+.sidebar.active .header button {
+  left: 90%;
+}
+
+.sidebar .menu-items {
+  display: flex;
+  flex-flow: column nowrap;
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 50px;
+  opacity: 0;
+}
+
+.sidebar.active .menu-items {
+  transition: all 0.8s ease;
+  opacity: 1;
+}
+
+.sidebar .menu-items li {
+  width: calc(200px - 0.8rem);
+  border-top: 1px solid lightgray;
+}
+
+.sidebar .menu-items li>button {
+  width: 100%;
+  display: inline-block;
+  line-height: 30px;
+  background-color: transparent;
+  color: white;
+  font-size: 18px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0.4rem;
+  border: none;
+}
+
+.sidebar.active .menu-items li>button:hover {
+  background-color: #C0C0C0;
+  cursor: pointer;
+}
+

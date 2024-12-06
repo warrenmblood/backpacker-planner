@@ -29,19 +29,19 @@ function Login() {
             <form onSubmit={handleSubmit} className="login-form">
                 <input
                     type="email"
-                    placeholder="Your Email"
+                    placeholder="Email"
                     required="required"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
                 <input
                     type="password"
-                    placeholder="Your Password"
+                    placeholder="Password"
                     required="required"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                <button type="submit" className="login-btn">Login</button>
+                <button type="submit">Login</button>
             </form>
         </div>
     );

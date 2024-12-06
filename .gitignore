@@ -23,5 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 
 # credentials
-/creds.json
+/src/creds.json
 /server/creds.json

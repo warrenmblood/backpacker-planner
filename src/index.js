@@ -6,12 +6,16 @@ import Protected from './components/Protected';
 import Login from './pages/Login';
 import Home from './pages/Home';
 
+const paths = ["/", "/tasks", "/itinerary", "/meals", "/gear", "/shopping-list"];
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
       <Route path="login" element={<Login />} />
       <Route path="/" element={<Protected />} >
-        <Route path="/" index element={<Home />} />
+        {paths.map((path, index) => (
+          <Route key={index} path={path} element={<Home />} />
+        ))}
       </Route>
     </Route>
   )
