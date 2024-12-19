@@ -1,8 +1,14 @@
-.App {
-  text-align: center;
+:root {
+  --sidebar-width-active: 200px;
+  --sidebar-width-inactive: 50px;
+  overflow: hidden;
 }
 
-.Login {
+.App {
+  text-align: left;
+}
+
+.SignIn {
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
@@ -10,7 +16,7 @@
   height: 100vh;
 }
 
-.login-form {
+.signin-form {
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
@@ -18,12 +24,18 @@
   gap: 5px;
 }
 
-.login-form input {
+.signin-form input {
   width: 200px;
 }
 
-.login-form button {
+.signin-form button {
   cursor: pointer;
+}
+
+.Home {
+  margin-top: 20px;
+  margin-left: 100px;
+  margin-right: 50px;
 }
 
 .sidebar {
@@ -31,7 +43,7 @@
   top: 0;
   left: 0;
   height: 100vh;
-  width: 50px;
+  width: var(--sidebar-width-inactive);
   background-color: #12171e;
   color: white;
   padding: 0.4rem 0.8rem;
@@ -39,19 +51,19 @@
 }
 
 .sidebar.active {
-  width: 200px;
+  width: var(--sidebar-width-active);
 }
 
 .main-content {
   position: relative;
-  left: 50px;
-  width: calc(100% - 50px);
+  left: var(--sidebar-width-inactive);
+  width: calc(100% - var(--sidebar-width-inactive));
   transition: all 0.5s ease;
 }
 
 .sidebar.active ~ .main-content {
-  left: 200px;
-  width: calc(100% - 200px);
+  left: var(--sidebar-width-active);
+  width: calc(100% - var(--sidebar-width-active));
 }
 
 .sidebar .header {
@@ -93,7 +105,7 @@
 }
 
 .sidebar .menu-items li {
-  width: calc(200px - 0.8rem);
+  width: calc(var(--sidebar-width-active) - 0.8rem);
   border-top: 1px solid lightgray;
 }
 
@@ -110,10 +122,37 @@
   text-overflow: ellipsis;
   padding: 0.4rem;
   border: none;
+  pointer-events: none;
+}
+
+.sidebar.active .menu-items li>button {
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .sidebar.active .menu-items li>button:hover {
   background-color: #C0C0C0;
-  cursor: pointer;
 }
 
+.Itinerary {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.Itinerary:hover {
+  overflow-y: scroll;
+}
+
+.Food {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.Food:hover {
+  overflow-y: scroll;
+}
+
+.Day {
+  border: 2px solid red;
+  width: 90%;
+}

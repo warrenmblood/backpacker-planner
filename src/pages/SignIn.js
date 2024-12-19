@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
-function Login() {
+function SignIn() {
     
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -24,9 +24,9 @@ function Login() {
     };
 
     return(
-        <div className="Login">
-            <h1>User Login</h1>
-            <form onSubmit={handleSubmit} className="login-form">
+        <div className="SignIn">
+            <h1>Sign in</h1>
+            <form onSubmit={handleSubmit} className="signin-form">
                 <input
                     type="email"
                     placeholder="Email"
@@ -41,10 +41,10 @@ function Login() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                <button type="submit">Login</button>
+                <button type="submit">Sign in</button>
             </form>
         </div>
     );
 }
 
-export default Login;
+export default SignIn;
