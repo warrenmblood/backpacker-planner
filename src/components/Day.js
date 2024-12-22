@@ -5,6 +5,7 @@ import { Button, ButtonGroup } from "@mui/material";
 function Day({ meals }) {
     // state variables
     const [food, setFood] = useState([{
+        id: "z123",
         name: "Snack 1",
         mealID: "a123"
     }]);
@@ -12,7 +13,7 @@ function Day({ meals }) {
     const [editing, setEditing] = useState(false);
     
     //
-    const { 
+    const {
         register,
         getValues,
         handleSubmit,
@@ -30,6 +31,13 @@ function Day({ meals }) {
         setEditing(false);
     };
 
+    const getMealName = (mealStr) => {
+        if(!mealStr) {
+            return "";
+        }
+        return JSON.parse(mealStr).name;
+    };
+
     return (
         <div className="Day">
             <h2>Day</h2>
@@ -37,23 +45,33 @@ function Day({ meals }) {
             <form onSubmit={handleSubmit(save)} className="day-form">
                 <fieldset className="day-header">
                     <div>
-                        <label htmlFor="description" />
                         {editing ? 
                             <input 
                                 {...register("description")}
-                                id="description" 
                                 type="textarea" 
                             /> : 
-                            <p id="description">{getValues("description")}</p>
+                            <p>{getValues("description")}</p>
                         }
                     </div>
                     <div>
-                        <label htmlFor="start">Start Location</label>
-                        <input id="start" type="text" />
+                        <label>Start Location</label>
+                        {editing ?
+                            <input
+                                {...register("start")} 
+                                type="text" 
+                            /> :
+                            <span>{getValues("start")}</span>
+                        }
                     </div>
                     <div>
-                        <label htmlFor="end">End Location</label>
-                        <input id="end" type="text" />
+                        <label>End Location</label>
+                        {editing ?
+                            <input
+                                {...register("end")}
+                                type="text"
+                            /> :
+                            <span>{getValues("end")}</span>
+                        }
                     </div>
                 </fieldset>
                 <fieldset className="food">
@@ -61,22 +79,41 @@ function Day({ meals }) {
                     <ol>
                         {food.map((foodItem) =>
                             <li>
-                                <label htmlFor="foodItem">{foodItem.name}</label>
-                                <select id="foodItem">
-                                    {meals.map(((meal) => 
-                                        <option value={meal.id}>{meal.name}</option>
-                                    ))}
-                                </select>
+                                {editing ?
+                                    <div>
+                                        <input
+                                            {...register(foodItem.id + "/name")}
+                                            type="text"
+                                            defaultValue={foodItem.name}
+                                        />
+                                        <select {...register(foodItem.id + "/meal")}>
+                                            {meals.map(((meal) => 
+                                                <option value={JSON.stringify(meal)}>{meal.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    :
+                                    <div>
+                                        <label>{getValues(foodItem.id + "/name")}</label>
+                                        <span>{getMealName(getValues(foodItem.id + "/meal"))}</span>
+                                    </div>   
+                                }
                             </li>
                         )}
                     </ol>                
                     <button>+ Add Food</button>
                 </fieldset>
-                <fieldset className="sleep-and-transportation">
-                    <legend>Sleep & Transportation</legend>
+                <fieldset className="lodging-and-transportation">
+                    <legend>Lodging & Transportation</legend>
                     <div>
-                        <label htmlFor="campsite">Campsite/Lodging</label>
-                        <input id="campsite" type="text" />
+                        <label>Lodging (Campsite)</label>
+                        {editing ?
+                            <input
+                                {...register("lodging")}
+                                type="text"
+                            /> :
+                            <span>{getValues("lodging")}</span>
+                        }
                         <ButtonGroup variant="outlined" size="small" aria-label="Basic button group">
                             <Button>Need to Reserve</Button>
                             <Button>Reserved</Button>
@@ -84,8 +121,14 @@ function Day({ meals }) {
                         </ButtonGroup>
                     </div>
                     <div>
-                        <label htmlFor="transportation">Transportation</label>
-                        <input id="transportation" type="text" />
+                        <label>Transportation</label>
+                        {editing ?
+                            <input
+                                {...register("transportation")}
+                                type="text"
+                            /> :
+                            <span>{getValues("transportation")}</span>
+                        }
                         <ButtonGroup variant="outlined" size="small" aria-label="Basic button group">
                             <Button>Need to Reserve</Button>
                             <Button>Reserved</Button>
