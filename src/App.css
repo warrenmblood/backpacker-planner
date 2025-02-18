@@ -33,9 +33,7 @@
 }
 
 .Home {
-  margin-top: 20px;
   margin-left: 100px;
-  margin-right: 50px;
 }
 
 .sidebar {
@@ -118,7 +116,6 @@
   font-size: 18px;
   text-align: left;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
   padding: 0.4rem;
   border: none;
@@ -153,6 +150,9 @@
 }
 
 .Day {
-  border: 2px solid red;
   width: 90%;
+}
+
+.addDay {
+  margin-bottom: 80px;
 }

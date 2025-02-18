@@ -3,7 +3,9 @@ import React from "react";
 function Tasks() {
     
     return (
-        <div className="Tasks">Tasks</div>
+        <div className="Tasks">
+            <h1>Tasks</h1>
+        </div>
     );
 }
 

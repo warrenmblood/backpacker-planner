@@ -1,18 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Button, ButtonGroup } from "@mui/material";
 
-function Day({ meals }) {
-    // state variables
-    const [food, setFood] = useState([{
-        id: "z123",
-        name: "Snack 1",
-        mealID: "a123"
-    }]);
+function Day({ id, index, tripStartDate, recipes, removeDay, updateDay }) {
 
-    const [editing, setEditing] = useState(false);
-    
-    //
+    const [food, setFood] = useState([]);
+    const [editing, setEditing] = useState(true);
+
+    const today = new Date(tripStartDate);
+    today.setDate(today.getDate() + index);
+    const dateFormat = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+
     const {
         register,
         getValues,
@@ -20,36 +17,72 @@ function Day({ meals }) {
         formState: { errors, isSubmitting },
     } = useForm();
 
-    const edit = () => {
-        console.log('editing');
+    const edit = (event) => {
         setEditing(true);
     };
 
     const save = (data, event) => {
-        event.preventDefault(); // stop the form from submitting
-        console.log('saving');
+        const lodging = {
+            location: data.lodgingText,
+            status: data.lodgingStatus
+        };
+        const transportation = {
+            location: data.transportationText,
+            status: data.transportationStatus
+        };
+        const foodCopy = [...food];
+        foodCopy.forEach((item) => {
+            item.name = data[item.id + "/name"];
+            item.recipe = data[item.id + "/recipe"];
+        });
+        setFood(foodCopy);
+        updateDay(id, data.description, data.start, data.end, foodCopy, lodging, transportation);
         setEditing(false);
     };
 
-    const getMealName = (mealStr) => {
-        if(!mealStr) {
+    const getRecipeName = (recipeStr) => {
+        if(!recipeStr) {
             return "";
         }
-        return JSON.parse(mealStr).name;
+        return JSON.parse(recipeStr).name;
+    };
+    
+    const createFoodItem = () => {
+        const item = {};
+        item.id = `foodItem${Date.now()}`;
+        item.name = "";
+        item.recipe = {};
+        return item;
+    };
+
+    const addFood = (event) => {
+        event.preventDefault();  // stop the form from submitting
+        const foodCopy = [...food];
+        foodCopy.push(createFoodItem());
+        setFood(foodCopy);
+    };
+
+    const removeFood = (id, event) => {
+        event.preventDefault();  // stop the form from submitting
+        const foodCopy = food.filter((item) => item.id !== id);
+        setFood(foodCopy);
     };
 
     return (
         <div className="Day">
-            <h2>Day</h2>
-            <h3>January 14, 2025</h3>
+            <h2>{`Day ${index}`}</h2>
+            <h3>{today.toLocaleDateString("en-US", dateFormat)}</h3>
             <form onSubmit={handleSubmit(save)} className="day-form">
                 <fieldset className="day-header">
                     <div>
                         {editing ? 
                             <input 
                                 {...register("description")}
-                                type="textarea" 
-                            /> : 
+                                type="textarea"
+                                placeholder="Description"
+                                autoFocus
+                            /> 
+                            : 
                             <p>{getValues("description")}</p>
                         }
                     </div>
@@ -59,7 +92,8 @@ function Day({ meals }) {
                             <input
                                 {...register("start")} 
                                 type="text" 
-                            /> :
+                            /> 
+                            :
                             <span>{getValues("start")}</span>
                         }
                     </div>
@@ -69,7 +103,8 @@ function Day({ meals }) {
                             <input
                                 {...register("end")}
                                 type="text"
-                            /> :
+                            /> 
+                            :
                             <span>{getValues("end")}</span>
                         }
                     </div>
@@ -86,59 +121,109 @@ function Day({ meals }) {
                                             type="text"
                                             defaultValue={foodItem.name}
                                         />
-                                        <select {...register(foodItem.id + "/meal")}>
-                                            {meals.map(((meal) => 
-                                                <option value={JSON.stringify(meal)}>{meal.name}</option>
+                                        <select {...register(foodItem.id + "/recipe")}>
+                                            {recipes.map(((recipe) => 
+                                                <option value={JSON.stringify(recipe)}>{recipe.name}</option>
                                             ))}
                                         </select>
                                     </div>
                                     :
                                     <div>
                                         <label>{getValues(foodItem.id + "/name")}</label>
-                                        <span>{getMealName(getValues(foodItem.id + "/meal"))}</span>
-                                    </div>   
+                                        <span>{getRecipeName(getValues(foodItem.id + "/recipe"))}</span>
+                                    </div>  
                                 }
+                                {editing && <button onClick={(e) => removeFood(foodItem.id, e)}>Remove</button>}
                             </li>
                         )}
-                    </ol>                
-                    <button>+ Add Food</button>
+                    </ol>
+                    {editing && <button onClick={(e) => addFood(e)}>+ Add Food</button>}       
                 </fieldset>
                 <fieldset className="lodging-and-transportation">
                     <legend>Lodging & Transportation</legend>
                     <div>
                         <label>Lodging (Campsite)</label>
                         {editing ?
-                            <input
-                                {...register("lodging")}
-                                type="text"
-                            /> :
-                            <span>{getValues("lodging")}</span>
+                            <div>
+                                <input
+                                    {...register("lodgingText")}
+                                    type="text"
+                                /> 
+                                <div>
+                                    <input
+                                        {...register("lodgingStatus")}
+                                        type="radio"
+                                        value="Need to reserve"
+                                    />Need to Reserve
+                                    <input
+                                        {...register("lodgingStatus")}
+                                        type="radio"
+                                        value="Reserved"
+                                    />Reserved
+                                    <input
+                                        {...register("lodgingStatus")}
+                                        type="radio"
+                                        value="No reservation needed"
+                                    />No Reservation Needed
+                                </div>
+                            </div>
+                            :
+                            <div>
+                                <span>{getValues("lodgingText") ?? ""}</span>
+                                <span>
+                                    {getValues("lodgingStatus") ? 
+                                        ` (${getValues("lodgingStatus")})`
+                                        :
+                                        ``
+                                    }
+                                </span>
+                            </div>
                         }
-                        <ButtonGroup variant="outlined" size="small" aria-label="Basic button group">
-                            <Button>Need to Reserve</Button>
-                            <Button>Reserved</Button>
-                            <Button>N/A</Button>
-                        </ButtonGroup>
                     </div>
                     <div>
                         <label>Transportation</label>
                         {editing ?
-                            <input
-                                {...register("transportation")}
-                                type="text"
-                            /> :
-                            <span>{getValues("transportation")}</span>
+                            <div>
+                                <input
+                                    {...register("transportationText")}
+                                    type="text"
+                                />
+                                <div>
+                                    <input
+                                        {...register("transportationStatus")}
+                                        type="radio"
+                                        value="Need to reserve"
+                                    />Need to Reserve
+                                    <input
+                                        {...register("transportationStatus")}
+                                        type="radio"
+                                        value="Reserved"
+                                    />Reserved
+                                    <input
+                                        {...register("transportationStatus")}
+                                        type="radio"
+                                        value="No reservation needed"
+                                    />No Reservation Needed
+                                </div>
+                            </div>
+                            :
+                            <div>
+                                <span>{getValues("transportationText") ?? ""}</span>
+                                <span>
+                                    {getValues("transportationStatus") ? 
+                                        ` (${getValues("transportationStatus")})`
+                                        :
+                                        ``
+                                    }
+                                </span>
+                            </div>
                         }
-                        <ButtonGroup variant="outlined" size="small" aria-label="Basic button group">
-                            <Button>Need to Reserve</Button>
-                            <Button>Reserved</Button>
-                            <Button>N/A</Button>
-                        </ButtonGroup>
                     </div>
-                    <button type="submit">Save</button>
+                    {editing && <button type="submit">Save</button>}
+                    {editing && <button onClick={(e) => removeDay(id, e)}>Remove Day</button>}
                 </fieldset>
             </form>
-            <button onClick={edit}>Edit</button>
+            {!editing && <button onClick={(e) => edit(e)}>Edit</button>}
         </div>
     );
 }

@@ -1,24 +1,86 @@
-import React from "react";
+import React, { useState } from "react";
 import Day from "./Day";
+import { convertUTCToLocal } from "../utils.js";
 
-function Itinerary({ trip, meals }) {
-    const hasDays = trip.days ? trip.days.length > 0 : 0;
+function Itinerary({ recipes, tripName, tripStartDate, setTripStartDate, tripDays, setTripDays }) {
+    const [updating, setUpdating] = useState(false);
+    const [tempDate, setTempDate] = useState(tripStartDate);
+    const [updateBtnText, setUpdateBtnText] = useState("Cancel");
+
+    const handleUpdating = () => {
+        setUpdating(true);
+    };
+
+    const changeTempDate = (date) => {
+        setUpdateBtnText("Update Start Date");
+        setTempDate(date);
+    };
+
+    const submitStartDate = () => {
+        setTripStartDate(tempDate);
+        setUpdateBtnText("Cancel");
+        setUpdating(false);
+    };
+
+    const addDay = () => {
+        const day = {};
+        day.id = `Day${Date.now()}`;
+        const tripDaysCopy = [...tripDays];
+        tripDaysCopy.push(day);
+        setTripDays(tripDaysCopy);
+    };
+
+    const removeDay = (id, event) => {
+        const tripDaysCopy = tripDays.filter((day) => day.id !== id);
+        setTripDays(tripDaysCopy);
+    };
+
+    const updateDay = (id, description, start, end, food, lodging, transportation) => {
+        const tripDaysCopy = [...tripDays];
+        const thisDay = tripDaysCopy.find((day) => day.id === id);
+        thisDay.description = description;
+        thisDay.start = start;
+        thisDay.end = end;
+        thisDay.food = food;
+        thisDay.lodging = lodging;
+        thisDay.transportation = transportation;
+        setTripDays(tripDaysCopy);
+        console.log(tripDaysCopy);
+    }
 
     return (
         <div className="Itinerary">
-            <h1>{trip.name ?? "Select a Trip to Build Itinerary"}</h1>
+            <h1>{tripName ?? "Select a Trip to Build Itinerary"}</h1>
+            <div>
+                {updating ?
+                    <div>
+                        <input 
+                            type="date"
+                            required="required"
+                            onChange={(e) => changeTempDate(convertUTCToLocal(new Date(e.target.value)))}
+                        />
+                        <button onClick={submitStartDate}>{updateBtnText}</button>
+                    </div>
+                    :
+                    <button onClick={handleUpdating}>Change Start Date</button>
+                }
+            </div>
             <ol>
-                {hasDays ? 
-                    trip.days.map(day => 
-                        <li>
-                            <Day meals={meals}/>
-                        </li>
-                    ) :
+                {tripDays.map((day, index) => 
                     <li>
-                        <Day meals={meals}/>
+                        <Day 
+                            id={day.id}
+                            index={index}
+                            tripStartDate={tripStartDate}
+                            recipes={recipes}
+                            removeDay={removeDay}
+                            updateDay={updateDay}
+                        />
                     </li>
+                    )
                 }
             </ol>
+            <button className="addDay" onClick={addDay}>+Add Day</button>
         </div>
     );
 }
