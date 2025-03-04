@@ -3,6 +3,7 @@ import Day from "./Day";
 import { convertUTCToLocal } from "../utils.js";
 
 function Itinerary({ recipes, tripName, tripStartDate, setTripStartDate, tripDays, setTripDays }) {
+    const [numPeople, setNumPeople] = useState(1);
     const [updating, setUpdating] = useState(false);
     const [tempDate, setTempDate] = useState(tripStartDate);
     const [updateBtnText, setUpdateBtnText] = useState("Cancel");
@@ -52,6 +53,15 @@ function Itinerary({ recipes, tripName, tripStartDate, setTripStartDate, tripDay
         <div className="Itinerary">
             <h1>{tripName ?? "Select a Trip to Build Itinerary"}</h1>
             <div>
+                <label htmlFor="numPeople">Group Size</label>
+                <input
+                    id="numPeople"
+                    type="number"
+                    defaultValue={numPeople}
+                    onChange={(n) => setNumPeople(n)}
+                />
+            </div>
+            <div>   
                 {updating ?
                     <div>
                         <input 

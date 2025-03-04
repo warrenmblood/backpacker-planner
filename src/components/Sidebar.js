@@ -7,7 +7,7 @@ function Sidebar() {
 
     const [active, setActive] = useState(false);
 
-    const menuItems = ["Home", "Tasks", "Itinerary", "Food", "Shopping List", "Sign Out"];
+    const menuItems = ["Home", "Tasks", "Itinerary", "Recipes", "Shopping List", "Sign Out"];
 
     const activateSidebar = () => setActive(!active);
 
@@ -36,7 +36,7 @@ function Sidebar() {
                 navigate("/itinerary");
                 break;
             case 3:
-                navigate("/food");
+                navigate("/recipes");
                 break;
             case 4:
                 navigate("/shopping-list");

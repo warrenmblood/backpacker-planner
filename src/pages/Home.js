@@ -12,11 +12,15 @@ function Home() {
     const [recipes, setRecipes] = useState([
         {
             id: "a123",
-            name: "Clif Bar"
+            name: "Clif Bar",
+            serves: 1,
+            ingredients: []
         },
         {
             id: "a124",
-            name: "Mountain House"
+            name: "Mountain House",
+            serves: 1,
+            ingredients: []
         }
     ]);
     const [tripName, setTripName] = useState("Wonderland Trail");
@@ -41,7 +45,12 @@ function Home() {
                         setTripDays={setTripDays}
                     />
                 )}
-                {location.pathname === "/food" && <Food />}
+                {location.pathname === "/recipes" && (
+                    <Food
+                        recipes={recipes}
+                        setRecipes={setRecipes}
+                    />
+                )}
                 {location.pathname === "/shopping-list" && <ShoppingList />}
             </div>
         </div>

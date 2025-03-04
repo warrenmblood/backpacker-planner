@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 function Day({ id, index, tripStartDate, recipes, removeDay, updateDay }) {
 
     const [food, setFood] = useState([]);
-    const [editing, setEditing] = useState(true);
+    const [editing, setEditing] = useState(false);
 
     const today = new Date(tripStartDate);
     today.setDate(today.getDate() + index);

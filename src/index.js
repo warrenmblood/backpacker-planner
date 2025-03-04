@@ -6,7 +6,7 @@ import Protected from './components/Protected';
 import SignIn from './pages/SignIn';
 import Home from './pages/Home';
 
-const paths = ["/", "/tasks", "/itinerary", "/food", "/gear", "/shopping-list"];
+const paths = ["/", "/tasks", "/itinerary", "/recipes", "/gear", "/shopping-list"];
 
 const router = createBrowserRouter(
   createRoutesFromElements(
