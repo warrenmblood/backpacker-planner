@@ -11,11 +11,7 @@ function Recipe({ id, name, serves, ingredients, recipes, setRecipes, deleteReci
         formState: { errors, isSubmitting },
     } = useForm();
 
-    const edit = (event) => {
-        setEditing(true);
-    };
-
-    const save = (data, event) => {
+    const save = (data) => {
         const recipesCopy = [...recipes];
         const saving = recipesCopy[recipesCopy.findIndex((item) => item.id === id)];
         saving.name = data["name"];
@@ -54,11 +50,14 @@ function Recipe({ id, name, serves, ingredients, recipes, setRecipes, deleteReci
             <form onSubmit={handleSubmit(save)} className="recipe-form">
                 <div>
                     {editing ?
-                        <input
-                            {...register("name")}
-                            type="text"
-                            defaultValue={name}
-                        />
+                        <div>
+                            <label>Recipe Name</label>
+                            <input
+                                {...register("name")}
+                                type="text"
+                                defaultValue={name}
+                            />
+                        </div>
                         :
                         <h3>{name}</h3>
                     }
@@ -68,7 +67,9 @@ function Recipe({ id, name, serves, ingredients, recipes, setRecipes, deleteReci
                     <div>
                         {editing ?
                             <input
-                                {...register("serves")}
+                                {...register("serves", {
+                                    valueAsNumber: true,
+                                })}
                                 type="number"
                                 defaultValue={serves}
                             />
@@ -88,7 +89,9 @@ function Recipe({ id, name, serves, ingredients, recipes, setRecipes, deleteReci
                                         defaultValue={ingredient.name}
                                     />
                                     <input 
-                                        {...register(ingredient.id + "/quantity")}
+                                        {...register(ingredient.id + "/quantity", {
+                                            valueAsNumber: true,
+                                        })}
                                         type="number"
                                         defaultValue={ingredient.quantity}
                                     />
@@ -113,7 +116,7 @@ function Recipe({ id, name, serves, ingredients, recipes, setRecipes, deleteReci
                 {editing && <button type="submit">Save</button>}
                 {editing && <button onClick={(e) => deleteRecipe(id, e)}>Delete Recipe</button>}
             </form>
-            {!editing && <button onClick={(e) => edit(e)}>Edit</button>}
+            {!editing && <button onClick={() => setEditing(true)}>Edit</button>}
         </div>
     );
 }

@@ -9,23 +9,11 @@ import ShoppingList from "../components/ShoppingList";
 
 function Home() {
 
-    const [recipes, setRecipes] = useState([
-        {
-            id: "a123",
-            name: "Clif Bar",
-            serves: 1,
-            ingredients: []
-        },
-        {
-            id: "a124",
-            name: "Mountain House",
-            serves: 1,
-            ingredients: []
-        }
-    ]);
     const [tripName, setTripName] = useState("Wonderland Trail");
-    const [tripStartDate, setTripStartDate] = useState(new Date());
-    const [tripDays, setTripDays] = useState([{id: `Day${Date.now()}`}]);
+    const [startDate, setStartDate] = useState(new Date());
+    const [groupSize, setGroupSize] = useState(1);
+    const [recipes, setRecipes] = useState([]);
+    const [itinerary, setItinerary] = useState([{id: `Day${Date.now()}`}]);
 
     const location = useLocation();
 
@@ -34,15 +22,25 @@ function Home() {
             <Sidebar />
             <div className="main-content">
                 {location.pathname === "/" && <Trips />}
-                {location.pathname === "/tasks" && <Tasks />}
+                {location.pathname === "/tasks" && (
+                    <Tasks
+                        tripName={tripName}
+                        startDate={startDate}
+                        itinerary={itinerary}
+                        setItinerary={setItinerary} 
+                    />
+                )}
                 {location.pathname === "/itinerary" && (
                     <Itinerary
-                        recipes={recipes}
                         tripName={tripName}
-                        tripStartDate={tripStartDate}
-                        setTripStartDate={setTripStartDate}
-                        tripDays={tripDays}
-                        setTripDays={setTripDays}
+                        setTripName={setTripName}
+                        startDate={startDate}
+                        setStartDate={setStartDate}
+                        groupSize={groupSize}
+                        setGroupSize={setGroupSize}
+                        recipes={recipes}
+                        itinerary={itinerary}
+                        setItinerary={setItinerary}
                     />
                 )}
                 {location.pathname === "/recipes" && (
@@ -51,7 +49,14 @@ function Home() {
                         setRecipes={setRecipes}
                     />
                 )}
-                {location.pathname === "/shopping-list" && <ShoppingList />}
+                {location.pathname === "/shopping-list" && (
+                    <ShoppingList
+                        tripName={tripName}
+                        groupSize={groupSize}
+                        recipes={recipes}
+                        itinerary={itinerary}
+                    />
+                )}
             </div>
         </div>
     );

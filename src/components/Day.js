@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
-function Day({ id, index, tripStartDate, recipes, removeDay, updateDay }) {
+function Day({ index, id, startDate, recipes, itinerary, setItinerary, removeDay, dateFormat }) {
 
-    const [food, setFood] = useState([]);
     const [editing, setEditing] = useState(false);
+    const [food, setFood] = useState([]);
 
-    const today = new Date(tripStartDate);
+    const today = new Date(startDate);
     today.setDate(today.getDate() + index);
-    const dateFormat = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
 
     const {
         register,
@@ -17,26 +16,34 @@ function Day({ id, index, tripStartDate, recipes, removeDay, updateDay }) {
         formState: { errors, isSubmitting },
     } = useForm();
 
-    const edit = (event) => {
-        setEditing(true);
-    };
+    const updateDay = (description, start, end, food, lodging, transportation) => {
+        const itineraryCopy = [...itinerary];
+        const thisDay = itineraryCopy.find((day) => day.id === id);
+        thisDay.description = description;
+        thisDay.start = start;
+        thisDay.end = end;
+        thisDay.food = food;
+        thisDay.lodging = lodging;
+        thisDay.transportation = transportation;
+        setItinerary(itineraryCopy);
+    }
 
-    const save = (data, event) => {
+    const save = (data) => {
         const lodging = {
             location: data.lodgingText,
             status: data.lodgingStatus
         };
         const transportation = {
-            location: data.transportationText,
+            transportName: data.transportationText,
             status: data.transportationStatus
         };
         const foodCopy = [...food];
         foodCopy.forEach((item) => {
             item.name = data[item.id + "/name"];
-            item.recipe = data[item.id + "/recipe"];
+            item.recipe = JSON.parse(data[item.id + "/recipe"]);
         });
         setFood(foodCopy);
-        updateDay(id, data.description, data.start, data.end, foodCopy, lodging, transportation);
+        updateDay(data.description, data.start, data.end, foodCopy, lodging, transportation);
         setEditing(false);
     };
 
@@ -51,7 +58,6 @@ function Day({ id, index, tripStartDate, recipes, removeDay, updateDay }) {
         const item = {};
         item.id = `foodItem${Date.now()}`;
         item.name = "";
-        item.recipe = {};
         return item;
     };
 
@@ -220,10 +226,10 @@ function Day({ id, index, tripStartDate, recipes, removeDay, updateDay }) {
                         }
                     </div>
                     {editing && <button type="submit">Save</button>}
-                    {editing && <button onClick={(e) => removeDay(id, e)}>Remove Day</button>}
+                    {editing && <button onClick={() => removeDay(id)}>Remove Day</button>}
                 </fieldset>
             </form>
-            {!editing && <button onClick={(e) => edit(e)}>Edit</button>}
+            {!editing && <button onClick={() => setEditing(true)}>Edit</button>}
         </div>
     );
 }

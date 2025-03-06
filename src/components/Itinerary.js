@@ -2,95 +2,91 @@ import React, { useState } from "react";
 import Day from "./Day";
 import { convertUTCToLocal } from "../utils.js";
 
-function Itinerary({ recipes, tripName, tripStartDate, setTripStartDate, tripDays, setTripDays }) {
-    const [numPeople, setNumPeople] = useState(1);
-    const [updating, setUpdating] = useState(false);
-    const [tempDate, setTempDate] = useState(tripStartDate);
-    const [updateBtnText, setUpdateBtnText] = useState("Cancel");
+function Itinerary({ tripName, setTripName, startDate, setStartDate, groupSize, setGroupSize, recipes, itinerary, setItinerary }) {
+    
+    const [editing, setEditing] = useState(false); // whether header info is being edited
+    const [start, setStart] = useState(startDate);
+    const [name, setName] = useState(tripName);
+    const [size, setSize] = useState(groupSize);
 
-    const handleUpdating = () => {
-        setUpdating(true);
-    };
+    const dateFormat = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
 
-    const changeTempDate = (date) => {
-        setUpdateBtnText("Update Start Date");
-        setTempDate(date);
-    };
-
-    const submitStartDate = () => {
-        setTripStartDate(tempDate);
-        setUpdateBtnText("Cancel");
-        setUpdating(false);
+    const submitHeader = () => {
+        setTripName(name);
+        setStartDate(start);
+        setGroupSize(size);
+        setEditing(false);
     };
 
     const addDay = () => {
         const day = {};
         day.id = `Day${Date.now()}`;
-        const tripDaysCopy = [...tripDays];
-        tripDaysCopy.push(day);
-        setTripDays(tripDaysCopy);
+        const itineraryCopy = [...itinerary];
+        itineraryCopy.push(day);
+        setItinerary(itineraryCopy);
     };
 
-    const removeDay = (id, event) => {
-        const tripDaysCopy = tripDays.filter((day) => day.id !== id);
-        setTripDays(tripDaysCopy);
+    const removeDay = (id) => {
+        const itineraryCopy = itinerary.filter((day) => day.id !== id);
+        setItinerary(itineraryCopy);
     };
-
-    const updateDay = (id, description, start, end, food, lodging, transportation) => {
-        const tripDaysCopy = [...tripDays];
-        const thisDay = tripDaysCopy.find((day) => day.id === id);
-        thisDay.description = description;
-        thisDay.start = start;
-        thisDay.end = end;
-        thisDay.food = food;
-        thisDay.lodging = lodging;
-        thisDay.transportation = transportation;
-        setTripDays(tripDaysCopy);
-        console.log(tripDaysCopy);
-    }
 
     return (
         <div className="Itinerary">
-            <h1>{tripName ?? "Select a Trip to Build Itinerary"}</h1>
-            <div>
-                <label htmlFor="numPeople">Group Size</label>
-                <input
-                    id="numPeople"
-                    type="number"
-                    defaultValue={numPeople}
-                    onChange={(n) => setNumPeople(n)}
-                />
-            </div>
-            <div>   
-                {updating ?
+            <h1>Itinerary</h1>
+            <div className="header">
+                {editing ?
                     <div>
-                        <input 
+                        <input
+                            id="tripName"
+                            type="text"
+                            required="required"
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                        <label htmlFor="startDate">Start Date</label>
+                        <input
+                            id="startDate"
                             type="date"
                             required="required"
-                            onChange={(e) => changeTempDate(convertUTCToLocal(new Date(e.target.value)))}
+                            onChange={(e) => setStart(convertUTCToLocal(new Date(e.target.value)))}
                         />
-                        <button onClick={submitStartDate}>{updateBtnText}</button>
+                        <label htmlFor="size">Group Size</label>
+                        <input
+                            id="groupSize"
+                            type="number"
+                            defaultValue={groupSize}
+                            onChange={(e) => setSize(e.target.value)}
+                        />
+                        <button onClick={() => setEditing(false)}>Cancel</button>
+                        <button onClick={submitHeader}>Update</button>
                     </div>
                     :
-                    <button onClick={handleUpdating}>Change Start Date</button>
+                    <div>
+                        <h2>{tripName ?? "Select a Trip to Build Itinerary"}</h2>
+                        <h3>{startDate.toLocaleDateString("en-US", dateFormat)}</h3>
+                        <p>{`Group Size: ${groupSize}`}</p>
+                        <button onClick={() => setEditing(true)}>Edit Header</button>
+                    </div>
                 }
             </div>
             <ol>
-                {tripDays.map((day, index) => 
+                {itinerary.map((day, index) => 
                     <li>
-                        <Day 
-                            id={day.id}
+                        <Day
                             index={index}
-                            tripStartDate={tripStartDate}
+                            id={day.id}
+                            startDate={startDate}
                             recipes={recipes}
+                            itinerary={itinerary}
+                            setItinerary={setItinerary}
                             removeDay={removeDay}
-                            updateDay={updateDay}
+                            dateFormat={dateFormat}
                         />
                     </li>
                     )
                 }
             </ol>
-            <button className="addDay" onClick={addDay}>+Add Day</button>
+            <button className="addDay" onClick={addDay}>Add Day</button>
         </div>
     );
 }
